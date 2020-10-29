@@ -22,6 +22,7 @@ Source the setup.bash file
 
 Open a terminal and run:
 
+- Open QGroundControl 
 - ``` roslaunch px4 ogm_mapping.launch ```
 - ``` roslaunch ogm_mapping mapping.launch ```
 
