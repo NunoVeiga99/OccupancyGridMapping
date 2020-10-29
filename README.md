@@ -26,3 +26,16 @@ Open a terminal and run:
 - ``` roslaunch ogm_mapping mapping.launch ```
 
 
+## How to use github
+
+Go to the directory file with ``` cd OccupancyGrid Mapping ```.
+To check changed files in the directory run ``` git status ```.
+Whenever you start working with the code, make sure that you pull all changes with ``` git pull ```.
+
+If you have made changes in the code that you want to commit run the following commands:
+
+- ``` git add [path to files you want to add] ```
+- ``` git commit -m "Message explaining the changes" ```
+- ``` git push ```
+
+
