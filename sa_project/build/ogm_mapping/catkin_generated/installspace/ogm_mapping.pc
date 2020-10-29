@@ -1,0 +1,8 @@
+prefix=/home/nuno/sa_project/install
+
+Name: ogm_mapping
+Description: Description of ogm_mapping
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

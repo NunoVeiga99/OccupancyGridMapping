@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="ogm_mapping" type="mapping.py" name="scan_lidar" output="screen">
+        
+    </node>
+</launch>
