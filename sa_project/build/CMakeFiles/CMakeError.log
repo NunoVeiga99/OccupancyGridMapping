@@ -1,24 +1,24 @@
 Determining if the pthread_create exist failed with the following output:
-Change Dir: /home/nuno/sa_project/build/CMakeFiles/CMakeTmp
+Change Dir: /home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_2ecf6/fast"
-/usr/bin/make -f CMakeFiles/cmTC_2ecf6.dir/build.make CMakeFiles/cmTC_2ecf6.dir/build
-make[1]: Entering directory '/home/nuno/sa_project/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_2ecf6.dir/CheckSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_2ecf6.dir/CheckSymbolExists.c.o   -c /home/nuno/sa_project/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_2ecf6
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2ecf6.dir/link.txt --verbose=1
-/usr/bin/cc      -rdynamic CMakeFiles/cmTC_2ecf6.dir/CheckSymbolExists.c.o  -o cmTC_2ecf6 
-CMakeFiles/cmTC_2ecf6.dir/CheckSymbolExists.c.o: na função `main':
+Run Build Command:"/usr/bin/make" "cmTC_b39da/fast"
+/usr/bin/make -f CMakeFiles/cmTC_b39da.dir/build.make CMakeFiles/cmTC_b39da.dir/build
+make[1]: Entering directory '/home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_b39da.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_b39da.dir/CheckSymbolExists.c.o   -c /home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_b39da
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b39da.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_b39da.dir/CheckSymbolExists.c.o  -o cmTC_b39da 
+CMakeFiles/cmTC_b39da.dir/CheckSymbolExists.c.o: na função `main':
 CheckSymbolExists.c:(.text+0x1b): referência indefinida a `pthread_create'
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_2ecf6.dir/build.make:97: recipe for target 'cmTC_2ecf6' failed
-make[1]: *** [cmTC_2ecf6] Error 1
-make[1]: Leaving directory '/home/nuno/sa_project/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_2ecf6/fast' failed
-make: *** [cmTC_2ecf6/fast] Error 2
+CMakeFiles/cmTC_b39da.dir/build.make:97: recipe for target 'cmTC_b39da' failed
+make[1]: *** [cmTC_b39da] Error 1
+make[1]: Leaving directory '/home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_b39da/fast' failed
+make: *** [cmTC_b39da/fast] Error 2
 
-File /home/nuno/sa_project/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+File /home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
 #include <pthread.h>
 
@@ -34,22 +34,22 @@ int main(int argc, char** argv)
 }
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: /home/nuno/sa_project/build/CMakeFiles/CMakeTmp
+Change Dir: /home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_a6ad0/fast"
-/usr/bin/make -f CMakeFiles/cmTC_a6ad0.dir/build.make CMakeFiles/cmTC_a6ad0.dir/build
-make[1]: Entering directory '/home/nuno/sa_project/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_a6ad0.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_a6ad0.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
-Linking C executable cmTC_a6ad0
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a6ad0.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_a6ad0.dir/CheckFunctionExists.c.o  -o cmTC_a6ad0 -lpthreads 
+Run Build Command:"/usr/bin/make" "cmTC_13810/fast"
+/usr/bin/make -f CMakeFiles/cmTC_13810.dir/build.make CMakeFiles/cmTC_13810.dir/build
+make[1]: Entering directory '/home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_13810.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_13810.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_13810
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_13810.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_13810.dir/CheckFunctionExists.c.o  -o cmTC_13810 -lpthreads 
 /usr/bin/ld: não foi possível localizar -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_a6ad0.dir/build.make:97: recipe for target 'cmTC_a6ad0' failed
-make[1]: *** [cmTC_a6ad0] Error 1
-make[1]: Leaving directory '/home/nuno/sa_project/build/CMakeFiles/CMakeTmp'
-Makefile:126: recipe for target 'cmTC_a6ad0/fast' failed
-make: *** [cmTC_a6ad0/fast] Error 2
+CMakeFiles/cmTC_13810.dir/build.make:97: recipe for target 'cmTC_13810' failed
+make[1]: *** [cmTC_13810] Error 1
+make[1]: Leaving directory '/home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_13810/fast' failed
+make: *** [cmTC_13810/fast] Error 2
 
 

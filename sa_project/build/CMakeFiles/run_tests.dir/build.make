@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nuno/sa_project/src
+CMAKE_SOURCE_DIR = /home/nuno/OccupancyGridMapping/sa_project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nuno/sa_project/build
+CMAKE_BINARY_DIR = /home/nuno/OccupancyGridMapping/sa_project/build
 
 # Utility rule file for run_tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/run_tests.dir/clean:
 .PHONY : CMakeFiles/run_tests.dir/clean
 
 CMakeFiles/run_tests.dir/depend:
-	cd /home/nuno/sa_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nuno/sa_project/src /home/nuno/sa_project/src /home/nuno/sa_project/build /home/nuno/sa_project/build /home/nuno/sa_project/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/nuno/OccupancyGridMapping/sa_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nuno/OccupancyGridMapping/sa_project/src /home/nuno/OccupancyGridMapping/sa_project/src /home/nuno/OccupancyGridMapping/sa_project/build /home/nuno/OccupancyGridMapping/sa_project/build /home/nuno/OccupancyGridMapping/sa_project/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/run_tests.dir/depend
 
