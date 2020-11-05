@@ -1,23 +1,42 @@
-Steps to setup directory:
+# Occupancy Grid Mapping
 
- . git clone [github link]
- . erase the build folder inside sa_project
- . cd OccupancyGridMapping/sa_project/
- . catkin_make
+## Install the simulator
+
+Follow the steps in the following link (until line 8 of XTDrone Source Download)
+- [Install drone simulator](https://www.yuque.com/xtdrone/manual_en/basic_config_1.11)
+
+
+## Setup the directory:
+
+- ``` git clone [github link] ``` 
+- erase the build folder inside sa_project
+- ``` cd OccupancyGridMapping/sa_project/ ```
+- ``` catkin_make ```
   
-  Source the setup.bash file
-    . gedit ~/.bashrc
- 
- To the code
+Source the setup.bash file
+
+- ``` gedit ~/.bashrc ```
+- Add ``` source ~/OccupancyGridMapping/sa_project/devel/setup.bash ``` at the end of the file
+
+## Run the code
+
+Open a terminal and run:
+
+- Open QGroundControl 
+- ``` roslaunch px4 ogm_mapping.launch ```
+- ``` roslaunch ogm_mapping mapping.launch ```
 
 
+## How to use github
+
+Go to the directory file with ``` cd OccupancyGrid Mapping ```.
+To check changed files in the directory run ``` git status ```.
+Whenever you start working with the code, make sure that you pull all changes with ``` git pull ```.
+
+If you have made changes in the code that you want to commit run the following commands:
+
+- ``` git add [path to files you want to add] ```
+- ``` git commit -m "Message explaining the changes" ```
+- ``` git push ```
 
 
-
-
-
-
-
-# Semana 1 (12/10/2020 a 16/10/2020)
---> Ler artigos e encontrar ideias.
---> Preparar um ppt para apresentação.
