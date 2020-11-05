@@ -7,6 +7,7 @@ from sensor_msgs.msg import LaserScan
 def callback(msg):
     print len(msg.ranges)
 
-rospy.init_node('scan_values')
+# declare the node name
+rospy.init_node('scan_lidar')
 sub = rospy.Subscriber('/iris_0/scan', LaserScan, callback)
 rospy.spin()
