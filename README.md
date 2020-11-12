@@ -8,7 +8,8 @@ Follow the steps in the following link (until line 8 of XTDrone Source Download)
 
 ## Setup the directory:
 
-- ``` git clone github link ``` 
+Clone the repository:
+- ``` git clone https://github.com/NunoVeiga99/OccupancyGridMapping.git ```
 - erase the build folder inside sa_project
 - ``` cd OccupancyGridMapping/sa_project/ ```
 - ``` catkin_make ```
