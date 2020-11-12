@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nuno/OccupancyGridMapping/sa_project/src
+CMAKE_SOURCE_DIR = /home/pedro/OccupancyGridMapping/sa_project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nuno/OccupancyGridMapping/sa_project/build
+CMAKE_BINARY_DIR = /home/pedro/OccupancyGridMapping/sa_project/build
 
 # Utility rule file for roscpp_generate_messages_nodejs.
 
@@ -63,10 +63,10 @@ ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/build: roscpp_generat
 .PHONY : ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/build
 
 ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/clean:
-	cd /home/nuno/OccupancyGridMapping/sa_project/build/ogm_mapping && $(CMAKE_COMMAND) -P CMakeFiles/roscpp_generate_messages_nodejs.dir/cmake_clean.cmake
+	cd /home/pedro/OccupancyGridMapping/sa_project/build/ogm_mapping && $(CMAKE_COMMAND) -P CMakeFiles/roscpp_generate_messages_nodejs.dir/cmake_clean.cmake
 .PHONY : ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/clean
 
 ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/depend:
-	cd /home/nuno/OccupancyGridMapping/sa_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nuno/OccupancyGridMapping/sa_project/src /home/nuno/OccupancyGridMapping/sa_project/src/ogm_mapping /home/nuno/OccupancyGridMapping/sa_project/build /home/nuno/OccupancyGridMapping/sa_project/build/ogm_mapping /home/nuno/OccupancyGridMapping/sa_project/build/ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/pedro/OccupancyGridMapping/sa_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pedro/OccupancyGridMapping/sa_project/src /home/pedro/OccupancyGridMapping/sa_project/src/ogm_mapping /home/pedro/OccupancyGridMapping/sa_project/build /home/pedro/OccupancyGridMapping/sa_project/build/ogm_mapping /home/pedro/OccupancyGridMapping/sa_project/build/ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : ogm_mapping/CMakeFiles/roscpp_generate_messages_nodejs.dir/depend
 

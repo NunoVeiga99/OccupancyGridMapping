@@ -1,2 +1,2 @@
 ogm_mapping
--DCATKIN_DEVEL_PREFIX=/home/nuno/OccupancyGridMapping/sa_project/devel -DCMAKE_INSTALL_PREFIX=/home/nuno/OccupancyGridMapping/sa_project/install -G Unix Makefiles
+-DCATKIN_DEVEL_PREFIX=/home/pedro/OccupancyGridMapping/sa_project/devel -DCMAKE_INSTALL_PREFIX=/home/pedro/OccupancyGridMapping/sa_project/install -G Unix Makefiles

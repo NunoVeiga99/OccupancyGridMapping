@@ -1,8 +1,8 @@
-# Install script for directory: /home/nuno/OccupancyGridMapping/sa_project/src/ogm_mapping
+# Install script for directory: /home/pedro/OccupancyGridMapping/sa_project/src/ogm_mapping
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/nuno/OccupancyGridMapping/sa_project/install")
+  set(CMAKE_INSTALL_PREFIX "/home/pedro/OccupancyGridMapping/sa_project/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/nuno/OccupancyGridMapping/sa_project/build/ogm_mapping/catkin_generated/installspace/ogm_mapping.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/pedro/OccupancyGridMapping/sa_project/build/ogm_mapping/catkin_generated/installspace/ogm_mapping.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ogm_mapping/cmake" TYPE FILE FILES
-    "/home/nuno/OccupancyGridMapping/sa_project/build/ogm_mapping/catkin_generated/installspace/ogm_mappingConfig.cmake"
-    "/home/nuno/OccupancyGridMapping/sa_project/build/ogm_mapping/catkin_generated/installspace/ogm_mappingConfig-version.cmake"
+    "/home/pedro/OccupancyGridMapping/sa_project/build/ogm_mapping/catkin_generated/installspace/ogm_mappingConfig.cmake"
+    "/home/pedro/OccupancyGridMapping/sa_project/build/ogm_mapping/catkin_generated/installspace/ogm_mappingConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ogm_mapping" TYPE FILE FILES "/home/nuno/OccupancyGridMapping/sa_project/src/ogm_mapping/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ogm_mapping" TYPE FILE FILES "/home/pedro/OccupancyGridMapping/sa_project/src/ogm_mapping/package.xml")
 endif()
 

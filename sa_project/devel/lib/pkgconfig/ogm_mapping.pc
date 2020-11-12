@@ -1,4 +1,4 @@
-prefix=/home/nuno/OccupancyGridMapping/sa_project/devel
+prefix=/home/pedro/OccupancyGridMapping/sa_project/devel
 
 Name: ogm_mapping
 Description: Description of ogm_mapping
