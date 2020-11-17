@@ -67,14 +67,14 @@ set(ogm_mapping_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(ogm_mapping_SOURCE_PREFIX /home/pedro/OccupancyGridMapping/sa_project/src/ogm_mapping)
-  set(ogm_mapping_DEVEL_PREFIX /home/pedro/OccupancyGridMapping/sa_project/devel)
+  set(ogm_mapping_SOURCE_PREFIX /home/helder/OccupancyGridMapping/sa_project/src/ogm_mapping)
+  set(ogm_mapping_DEVEL_PREFIX /home/helder/OccupancyGridMapping/sa_project/devel)
   set(ogm_mapping_INSTALL_PREFIX "")
   set(ogm_mapping_PREFIX ${ogm_mapping_DEVEL_PREFIX})
 else()
   set(ogm_mapping_SOURCE_PREFIX "")
   set(ogm_mapping_DEVEL_PREFIX "")
-  set(ogm_mapping_INSTALL_PREFIX /home/pedro/OccupancyGridMapping/sa_project/install)
+  set(ogm_mapping_INSTALL_PREFIX /home/helder/OccupancyGridMapping/sa_project/install)
   set(ogm_mapping_PREFIX ${ogm_mapping_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/pedro/OccupancyGridMapping/sa_project/install/lib;/opt/ros/melodic/lib)
+    foreach(path /home/helder/OccupancyGridMapping/sa_project/install/lib;/home/helder/OccupancyGridMapping/sa_project/devel/lib;/home/helder/sa_project/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

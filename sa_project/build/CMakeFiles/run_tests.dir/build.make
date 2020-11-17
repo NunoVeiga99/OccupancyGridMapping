@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pedro/OccupancyGridMapping/sa_project/src
+CMAKE_SOURCE_DIR = /home/helder/OccupancyGridMapping/sa_project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pedro/OccupancyGridMapping/sa_project/build
+CMAKE_BINARY_DIR = /home/helder/OccupancyGridMapping/sa_project/build
 
 # Utility rule file for run_tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/run_tests.dir/clean:
 .PHONY : CMakeFiles/run_tests.dir/clean
 
 CMakeFiles/run_tests.dir/depend:
-	cd /home/pedro/OccupancyGridMapping/sa_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/pedro/OccupancyGridMapping/sa_project/src /home/pedro/OccupancyGridMapping/sa_project/src /home/pedro/OccupancyGridMapping/sa_project/build /home/pedro/OccupancyGridMapping/sa_project/build /home/pedro/OccupancyGridMapping/sa_project/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/helder/OccupancyGridMapping/sa_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/helder/OccupancyGridMapping/sa_project/src /home/helder/OccupancyGridMapping/sa_project/src /home/helder/OccupancyGridMapping/sa_project/build /home/helder/OccupancyGridMapping/sa_project/build /home/helder/OccupancyGridMapping/sa_project/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/run_tests.dir/depend
 

@@ -47,6 +47,40 @@ print(yi.shape)
 
 # --------------------- FUNCTIONS ----------------------
 
+#3D Transf 
+# roll  -> x axis   ->alpha
+# pitch -> y axis   ->beta
+# yaw   -> z axis   ->gamma
+
+# Receives (x,y,z) and returns (x',y',z')=[R](x,y,z)
+# given pitch, yaw and roll
+# in radians, because of numpy
+# point is a 
+
+def Euler_rotation(roll,pitch,yaw,):
+    R_alpha = np.matrix([[1, 0,              0],
+                        [0, np.cos(roll),   -np.sin(roll)],
+                        [0, np.sin(roll),   np.cos(roll)]])
+    R_beta  = np.matrix([[np.cos(pitch),0,np.sin(pitch)],
+                        [0,1,0],
+                        [-np.sin(pitch),0,np.cos(pitch)]])
+
+    R_gamma = np.matrix([[np.cos(yaw),-np.sin(yaw),0],
+                        [np.sin(yaw), np.cos(yaw),0],
+                        [0,0,1]])
+
+    # This order of matrix mult. was tested in geogebra
+    R = np.matmul(R_alpha,R_beta,R_gamma)
+
+    return R.dot(point)
+
+# Returns (x,y) of 2D polar data
+def polar_to_rect(range,teta):
+    return np.array([range*np.cos(teta),range*np.sin(teta)])
+
+# To obtain the norm of 2D or 3D vector's, use this:
+#numpy.linalg.norm
+    
 
 def lidar_callback(msg):
     global lidar_points
