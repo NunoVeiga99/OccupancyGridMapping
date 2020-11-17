@@ -92,23 +92,17 @@ def inverse_range_sensor_model(x, y, yaw, zt):
     #print(phi)
 
 
-    #phi_values = np.repeat(phi[...,np.newaxis], 640, axis=2)
-    #bearing_array = bearings[2]
-    #print("bearings")
-    #print(bearing_array)
-
-   
 
     print("cheguei a meio do inverse range")
-  
+    
+
     for i in range(0,n_height):
         for j in range(0,n_width):
 
-            k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)
+            k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)            
             #print("LIDAR - PHI:")
             #print(lidar_angles - phi[i][j])
-
-            z = zt[k]
+            z = zt[k] 
             #print("closest point:")
             #print(z)
             #print("Index of closest angle")
@@ -137,8 +131,7 @@ def map_with_OGM(drone_pose):
     quaternion = drone_pose.orientation
     explicit_quat = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
     roll, pitch, yaw = tf.transformations.euler_from_quaternion(explicit_quat)
-
-    
+   
 
     # 2) Using a python and ROS nav_msgs::msg::_OccupancyGrid 
     OGM = OccupancyGrid()
@@ -184,23 +177,14 @@ def main():
     lidarSub = rospy.Subscriber('/iris_0/scan', LaserScan, lidar_callback)
     poseSub = rospy.Subscriber('/mavros/local_position/pose',PoseStamped, pose_callback)
 
+
+
     rospy.spin()
+    #rospy.rate.sleep()
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
