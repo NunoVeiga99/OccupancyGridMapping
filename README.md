@@ -23,7 +23,8 @@ Source the setup.bash file
 
 In order to run the simulation:
 - Open QGroundControl 
-In the terminal:
+
+In the terminal run:
 - ``` roslaunch px4 ogm_mapping.launch ```
 
 Or run a pre recorded rosbag with:
