@@ -22,16 +22,16 @@ Source the setup.bash file
 ## Run the code
 
 In order to run the simulation:
-- Open QGroundControl 
+  - Open QGroundControl 
 
-In the terminal run:
-- ``` roslaunch px4 ogm_mapping.launch ```
+  In the terminal run:
+  - ``` roslaunch px4 ogm_mapping.launch ```
 
 Or run a pre recorded rosbag with:
-- ``` rosbag play -l rosbag_name.sa ```
+  - ``` rosbag play -l rosbag_name.sa ```
 
 Then, run the mapping script with:
-- ``` roslaunch ogm_mapping mapping.launch ```
+  - ``` roslaunch ogm_mapping mapping.launch ```
 
 
 ## How to use github
