@@ -26,6 +26,7 @@ In order to run the simulation:
   - ``` roslaunch px4 ogm_mapping.launch ```
 
 Or run a pre recorded rosbag with:
+  - ``` roscore ```
   - ``` rosbag play -l rosbag_name.sa ```
 
 Then, run the mapping script with:
