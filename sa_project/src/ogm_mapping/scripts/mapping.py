@@ -7,6 +7,7 @@ import math
 
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import OccupancyGrid
 from tf.transformations import euler_from_quaternion
 
@@ -35,14 +36,11 @@ lti_matrix = np.zeros((n_height, n_width))
 a = np.linspace(-10,-10+n_width*resolution,num=n_width)
 xi = np.vstack([a] * n_width)
 print("Tamanho xi:")
-print(xi.shape)
+print(xi)
 yi = np.hstack([np.transpose(a[np.newaxis])] * n_height)
 print("Tamanho yi:")
-print(yi.shape)
+print(yi)
 
-#bearings = np.mgrid[0:n_width, 0:n_height, -np.pi:np.pi:640j]
-#print("Tamanho bearings:")
-#print(bearings.shape)
 
 
 # --------------------- FUNCTIONS ----------------------
@@ -56,8 +54,10 @@ def lidar_callback(msg):
 
 
 def pose_callback(msg):
+    global drone_pose
     drone_pose = msg.pose
     map_with_OGM(drone_pose)
+
 
 
 
@@ -71,7 +71,8 @@ def log_to_prob(matrix):
 
 def inverse_range_sensor_model(x, y, yaw, zt):
 
-    global bearings
+
+    np.set_printoptions(threshold=np.inf)
 
     occupancy = np.zeros((n_width,n_height))
 
@@ -81,40 +82,34 @@ def inverse_range_sensor_model(x, y, yaw, zt):
     alpha = 0.2
     beta = 0.009817477*2 # 2pi/640 - distance between adjacent beams
 
-    x_mat = np.full((n_width,n_height),x) # array of x
-    y_mat = np.full((n_width,n_height),y) # array of y
+    x_mat = np.full((n_width,n_height),x) # array of x values
+    y_mat = np.full((n_width,n_height),y) # array of y values
 
-    r = np.sqrt(np.square(xi - x_mat),np.square(yi - y_mat)) # relative range 
+    r = np.sqrt(np.square(xi - x_mat) + np.square(yi - y_mat)) # relative range 
     #print("r :")
     #print(r)
-    phi = np.arctan2(yi - y_mat,xi - x_mat) - yaw # relative bearing
+    phi = np.arctan2(yi - y_mat,xi - x_mat) - yaw # relative heading
     #print("phi :")
     #print(phi)
 
-
-
-    print("cheguei a meio do inverse range")
-    
-
+    # Iterating through every cell, checking their state of occupancy
     for i in range(0,n_height):
         for j in range(0,n_width):
 
-            k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)            
-            #print("LIDAR - PHI:")
-            #print(lidar_angles - phi[i][j])
+            # Findes the index correponding to the laser beam that intersects the cell
+            k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)
+            # Corresponding range            
             z = zt[k] 
-            #print("closest point:")
-            #print(z)
-            #print("Index of closest angle")
-            #print(k)
-
-            if z == float('inf') or math.isnan(z) or r[i][j] > min(zmax, z + alpha/2) or np.absolute(phi[i][j] - lidar_angles[k]) > beta/2:
-                occupancy[i][j] = 0 # Unknown, no information 
+    
+            if z == float('inf') or math.isnan(z) or r[i][j] > min(zmax, z + alpha/2) or abs(phi[i][j] - lidar_angles[k]) > beta/2:
+                occupancy[i][j] = 0 # Unknown
             elif z < zmax and abs(r[i][j] - z) < alpha/2:
                 occupancy[i][j] = 1 # Occupied
-            elif r[i][j] < z:
+            elif r[i][j] <= z:
                 occupancy[i][j] = -1 #Free
-    
+
+    #print("Ocupancia:")
+    #print(occupancy)
     return occupancy
 
 
@@ -150,6 +145,8 @@ def map_with_OGM(drone_pose):
     
     # Lets now write the OGM algorithm to use in the
     if len(lidar_points) != 0:
+
+
         # If the vector its not empty we should update the matrix with the help of the inverse range sensor model
         # l(t,i) = l(t-1,i) + inverse range-sensor model - l0 (l0 = 0)
         # Note: the l matriz was defined in the inverse ange sensor code with enteries like  positionx, positiony, theta, lidar_points
@@ -177,18 +174,11 @@ def main():
     lidarSub = rospy.Subscriber('/iris_0/scan', LaserScan, lidar_callback)
     poseSub = rospy.Subscriber('/mavros/local_position/pose',PoseStamped, pose_callback)
 
-
-
     rospy.spin()
-    #rospy.rate.sleep()
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
 
 
