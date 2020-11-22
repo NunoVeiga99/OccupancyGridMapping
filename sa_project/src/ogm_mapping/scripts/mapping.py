@@ -7,10 +7,11 @@ import math
 
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import OccupancyGrid
 from tf.transformations import euler_from_quaternion
 
-
+from bresenham import get_line
 
 
 
@@ -35,18 +36,14 @@ lti_matrix = np.zeros((n_height, n_width))
 a = np.linspace(-10,-10+n_width*resolution,num=n_width)
 xi = np.vstack([a] * n_width)
 print("Tamanho xi:")
-print(xi.shape)
+print(xi)
 yi = np.hstack([np.transpose(a[np.newaxis])] * n_height)
 print("Tamanho yi:")
-print(yi.shape)
+print(yi)
 
-#bearings = np.mgrid[0:n_width, 0:n_height, -np.pi:np.pi:640j]
-#print("Tamanho bearings:")
-#print(bearings.shape)
 
 
 # --------------------- FUNCTIONS ----------------------
-
 #3D Transf 
 # roll  -> x axis   ->alpha
 # pitch -> y axis   ->beta
@@ -57,7 +54,7 @@ print(yi.shape)
 # in radians, because of numpy
 # point is a 
 
-def Euler_rotation(roll,pitch,yaw,):
+def Euler_rotation(roll,pitch,yaw,point):
     R_alpha = np.matrix([[1, 0,              0],
                         [0, np.cos(roll),   -np.sin(roll)],
                         [0, np.sin(roll),   np.cos(roll)]])
@@ -76,11 +73,10 @@ def Euler_rotation(roll,pitch,yaw,):
 
 # Returns (x,y) of 2D polar data
 def polar_to_rect(range,teta):
-    return np.array([range*np.cos(teta),range*np.sin(teta)])
+    return ([range*np.cos(teta),range*np.sin(teta)])
 
 # To obtain the norm of 2D or 3D vector's, use this:
 #numpy.linalg.norm
-    
 
 def lidar_callback(msg):
     global lidar_points
@@ -90,8 +86,10 @@ def lidar_callback(msg):
 
 
 def pose_callback(msg):
+    global drone_pose
     drone_pose = msg.pose
     map_with_OGM(drone_pose)
+
 
 
 
@@ -105,7 +103,8 @@ def log_to_prob(matrix):
 
 def inverse_range_sensor_model(x, y, yaw, zt):
 
-    global bearings
+
+    np.set_printoptions(threshold=np.inf)
 
     occupancy = np.zeros((n_width,n_height))
 
@@ -115,40 +114,63 @@ def inverse_range_sensor_model(x, y, yaw, zt):
     alpha = 0.2
     beta = 0.009817477*2 # 2pi/640 - distance between adjacent beams
 
-    x_mat = np.full((n_width,n_height),x) # array of x
-    y_mat = np.full((n_width,n_height),y) # array of y
+    # x_mat = np.full((n_width,n_height),x) # array of x values
+    # y_mat = np.full((n_width,n_height),y) # array of y values
 
-    r = np.sqrt(np.square(xi - x_mat),np.square(yi - y_mat)) # relative range 
+    # r = np.sqrt(np.square(xi - x_mat) + np.square(yi - y_mat)) # relative range 
     #print("r :")
     #print(r)
-    phi = np.arctan2(yi - y_mat,xi - x_mat) - yaw # relative bearing
+    # phi = np.arctan2(yi - y_mat,xi - x_mat) - yaw # relative heading
     #print("phi :")
     #print(phi)
 
-
-
-    print("cheguei a meio do inverse range")
+    # Iterating through every cell, checking their state of occupancy
+    # for i in range(0,n_height):
+        # for j in range(0,n_width):
+        # Findes the index correponding to the laser beam that intersects the cell
+        # k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)
     
+        
+    x += 10 # in meters 
+    y += 10 # in meters
+    x_pos = int(x/resolution) # in pixels
+    y_pos = int(y/resolution) # in pixels
+    for i in range(n_beams):
+        
+        # Corresponding range            
+        z = zt[i]
+        # For now we will ignore the unknown positions
+        
+        
+        # but is possible t
+        if math.isnan(z): # if there was a reading error
+            continue
+        
+        limit = True # if we reveive a inf, we know that the space between the zmax
+        #and the drone is empty. So we can map it as empty
+        if z == float('inf') :
+            z = zmax - (alpha)
+            limit = False
+            
+        
+        #(target_x,target_y) is the position that the laser is reading, if the
+        # drone is at (0,0). Further translation is necessary
+        target = polar_to_rect(z,lidar_angles[i]-yaw)
+        
+        # points is a list (converted to tuple for more read speed) of all the points that compose the beam (like a pixelized line in paint)
+        points = tuple(get_line((x_pos,int(y/resolution)),(int((target[0]+x)/resolution),int((target[1]+y)/resolution))))
+        
+        # print(points)
+                
+        for j in range(len(points)):
+            
+            if limit and z < zmax and abs((resolution*np.linalg.norm((points[j][0]-x_pos,points[j][1]-y_pos))) - z) < alpha/2:
+                occupancy[points[j][0]][points[j][1]] = 1 # Occupied
+            elif resolution*np.linalg.norm((points[j][0]-x_pos,points[j][1]-y_pos)) <= z:
+                occupancy[points[j][0]][points[j][1]] = -1 #Free
 
-    for i in range(0,n_height):
-        for j in range(0,n_width):
-
-            k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)            
-            #print("LIDAR - PHI:")
-            #print(lidar_angles - phi[i][j])
-            z = zt[k] 
-            #print("closest point:")
-            #print(z)
-            #print("Index of closest angle")
-            #print(k)
-
-            if z == float('inf') or math.isnan(z) or r[i][j] > min(zmax, z + alpha/2) or np.absolute(phi[i][j] - lidar_angles[k]) > beta/2:
-                occupancy[i][j] = 0 # Unknown, no information 
-            elif z < zmax and abs(r[i][j] - z) < alpha/2:
-                occupancy[i][j] = 1 # Occupied
-            elif r[i][j] < z:
-                occupancy[i][j] = -1 #Free
-    
+    #print("Ocupancia:")
+    #print(occupancy)
     return occupancy
 
 
@@ -165,6 +187,7 @@ def map_with_OGM(drone_pose):
     quaternion = drone_pose.orientation
     explicit_quat = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
     roll, pitch, yaw = tf.transformations.euler_from_quaternion(explicit_quat)
+    euler = (roll, pitch, yaw)
    
 
     # 2) Using a python and ROS nav_msgs::msg::_OccupancyGrid 
@@ -184,6 +207,8 @@ def map_with_OGM(drone_pose):
     
     # Lets now write the OGM algorithm to use in the
     if len(lidar_points) != 0:
+
+
         # If the vector its not empty we should update the matrix with the help of the inverse range sensor model
         # l(t,i) = l(t-1,i) + inverse range-sensor model - l0 (l0 = 0)
         # Note: the l matriz was defined in the inverse ange sensor code with enteries like  positionx, positiony, theta, lidar_points
@@ -211,18 +236,11 @@ def main():
     lidarSub = rospy.Subscriber('/iris_0/scan', LaserScan, lidar_callback)
     poseSub = rospy.Subscriber('/mavros/local_position/pose',PoseStamped, pose_callback)
 
-
-
     rospy.spin()
-    #rospy.rate.sleep()
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
 
 
@@ -239,4 +257,3 @@ if __name__ == '__main__':
 #scan_time: 0.0
 #range_min: 0.0799999982119
 #range_max: 10.0
-
