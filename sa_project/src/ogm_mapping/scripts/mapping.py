@@ -157,16 +157,17 @@ def inverse_range_sensor_model(x, y, yaw, zt):
         # drone is at (0,0). Further translation is necessary
         target = polar_to_rect(z,lidar_angles[i]-yaw)
         
-        # points is a list (converted to tuple for more read speed) of all the points that compose the beam (like a pixelized line in paint)
-        points = tuple(get_line((x_pos,int(y/resolution)),(int((target[0]+x)/resolution),int((target[1]+y)/resolution))))
+        # points is a list (converted to tuple for more ) of all the points that compose the beam (like a pixelized line in paint)
+        points = get_line((x_pos,y_pos),(int((target[0]+x)/resolution),int((target[1]+y)/resolution)))
         
         # print(points)
                 
         for j in range(len(points)):
             
-            if limit and z < zmax and abs((resolution*np.linalg.norm((points[j][0]-x_pos,points[j][1]-y_pos))) - z) < alpha/2:
+            z_new = resolution*math.sqrt(((points[j][0]-x_pos)*(points[j][0]-x_pos))+((points[j][1]-y_pos)*(points[j][1]-y_pos)))
+            if limit and z < zmax and abs(z_new - z) < alpha/2:
                 occupancy[points[j][0]][points[j][1]] = 1 # Occupied
-            elif resolution*np.linalg.norm((points[j][0]-x_pos,points[j][1]-y_pos)) <= z:
+            elif z_new <= z:
                 occupancy[points[j][0]][points[j][1]] = -1 #Free
 
     #print("Ocupancia:")
