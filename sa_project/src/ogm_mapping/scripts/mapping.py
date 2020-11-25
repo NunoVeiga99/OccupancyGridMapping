@@ -31,7 +31,10 @@ lidar_angles = np.linspace(min_angle, max_angle, 640)
 
 lti_matrix = np.zeros((n_height, n_width)) 
 
-a = np.linspace(-10,-10+n_width*resolution,num=n_width)
+x_origin = -15
+y_origin = -17
+
+a = np.linspace(x_origin,y_origin+n_width*resolution,num=n_width)
 xi = np.vstack([a] * n_width)
 yi = np.hstack([np.transpose(a[np.newaxis])] * n_height)
 
@@ -140,8 +143,8 @@ class Mapping(object):
             # k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)
         
             
-        x += 10 # in meters 
-        y += 10 # in meters
+        x += -x_origin # in meters 
+        y += -y_origin # in meters
         x_pos = int(x/resolution) # in pixels
         y_pos = int(y/resolution) # in pixels
         for i in range(n_beams):
@@ -160,7 +163,6 @@ class Mapping(object):
             if z == float('inf') :
                 z = zmax - (alpha)
                 limit = False
-                # continue
                 
             
             #(target_x,target_y) is the position that the laser is reading, if the
@@ -174,7 +176,8 @@ class Mapping(object):
                     
             for j in range(len(points)):
                 
-                 # check if the calculation are within map cell bounds                
+                 # check if the calculation is within map cell bounds                
+
                 if ((points[j][0] >= n_height ) or (points[j][1] >= n_width) or (points[j][0] < 0) or (points[j][1] < 0)):
                     continue
                 
@@ -216,8 +219,8 @@ class Mapping(object):
         OGM.info.height = n_height
         OGM.info.map_load_time = rospy.Time.now()
         # Set up the map origin
-        OGM.info.origin.position.x = -10
-        OGM.info.origin.position.y = -10
+        OGM.info.origin.position.x = x_origin
+        OGM.info.origin.position.y = y_origin
         
         # Lets now write the OGM algorithm to use in the
         if len(lidar_points) != 0 and abs(roll) < 0.05 and abs(pitch) < 0.05:
