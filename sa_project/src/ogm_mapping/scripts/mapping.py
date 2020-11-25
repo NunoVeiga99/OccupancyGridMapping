@@ -164,7 +164,7 @@ class Mapping(object):
             
             #(target_x,target_y) is the position that the laser is reading, if the
             # drone is at (0,0). Further translation is necessary
-            target = polar_to_rect(z,lidar_angles[i]-yaw)
+            target = polar_to_rect(z,lidar_angles[i]+yaw)
             
             # points is a list (converted to tuple for more ) of all the points that compose the beam (like a pixelized line in paint)
             points = get_line((x_pos,y_pos),(int((target[0]+x)/resolution),int((target[1]+y)/resolution)))
@@ -172,6 +172,12 @@ class Mapping(object):
             # print(points)
                     
             for j in range(len(points)):
+                
+                 # check if the calculation is within map cell bounds                
+                if ((points[j][0] >= n_height ) or (points[j][1] >= n_width)):
+                    continue
+                
+                # print("x =",points[j][0],"  y =",)
                 
                 z_new = resolution*math.sqrt(((points[j][0]-x_pos)*(points[j][0]-x_pos))+((points[j][1]-y_pos)*(points[j][1]-y_pos)))
                 if limit and z < zmax and abs(z_new - z) < alpha/2:
