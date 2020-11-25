@@ -18,8 +18,8 @@ from bresenham import get_line
 
 # --------------- INITIALIZATIONS ----------------------
 
-n_height = 400 #n de celulas
-n_width = 400 #n de celulas
+n_height = 800 #n de celulas
+n_width = 800 #n de celulas
 resolution = 0.05 #resolucao em metros
 min_angle = -np.pi # em radianos
 max_angle = np.pi #em radianos
@@ -160,6 +160,7 @@ class Mapping(object):
             if z == float('inf') :
                 z = zmax - (alpha)
                 limit = False
+                # continue
                 
             
             #(target_x,target_y) is the position that the laser is reading, if the
@@ -173,8 +174,8 @@ class Mapping(object):
                     
             for j in range(len(points)):
                 
-                 # check if the calculation is within map cell bounds                
-                if ((points[j][0] >= n_height ) or (points[j][1] >= n_width)):
+                 # check if the calculation are within map cell bounds                
+                if ((points[j][0] >= n_height ) or (points[j][1] >= n_width) or (points[j][0] < 0) or (points[j][1] < 0)):
                     continue
                 
                 # print("x =",points[j][0],"  y =",)
