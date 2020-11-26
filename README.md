@@ -19,6 +19,10 @@ Source the setup.bash file
 - ``` gedit ~/.bashrc ```
 - Add ``` source ~/OccupancyGridMapping/sa_project/devel/setup.bash ``` at the end of the file
 
+## Install gmapping 
+
+- ``` sudo apt-get install ros-melodic-gmapping ```
+
 ## Run the code
 
 In order to run the simulation:
