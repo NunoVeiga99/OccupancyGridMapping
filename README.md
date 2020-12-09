@@ -1,4 +1,4 @@
-# Occupancy Grid Mapping
+# 3D Occupancy Grid Mapping
 
 ## Install the simulator
 
