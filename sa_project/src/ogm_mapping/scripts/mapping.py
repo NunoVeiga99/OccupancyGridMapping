@@ -323,7 +323,7 @@ class Mapping(object):
                 for k in range(n_width):
                     x = (float(k)*resolution) + (x_origin)# - drone_x
                     y = (float(j)*resolution) + (y_origin)# - drone_y
-                    z = -((float(i)*z_resolution) + (-z_origin))
+                    z = -((float(i)*z_resolution) + (z_origin))
                     
                     # We just want borders!
                     if(D3Prob_Matrix[i,j,k] <= 0.5):
