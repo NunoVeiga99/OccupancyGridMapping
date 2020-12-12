@@ -82,6 +82,7 @@ def get_line(start, end):
     dy = y2 - y1
  
     # Determine how steep the line is
+    # if it is steep, we need to change the y and x, to adapt the algorithm
     is_steep = abs(dy) > abs(dx)
  
     # Rotate line
@@ -90,6 +91,8 @@ def get_line(start, end):
         x2, y2 = y2, x2
  
     # Swap start and end points if necessary and store swap state
+    # the algorithm is used to run from right to left. If if it's the oposite
+    # we need to swap the initial and final positions
     swapped = False
     if x1 > x2:
         x1, x2 = x2, x1
