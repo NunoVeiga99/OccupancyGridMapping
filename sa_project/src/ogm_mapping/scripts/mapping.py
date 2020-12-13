@@ -17,6 +17,7 @@ import std_msgs.msg
 import sensor_msgs.point_cloud2 as pcl2
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseArray
 from nav_msgs.msg import OccupancyGrid
 from tf.transformations import euler_from_quaternion
 
@@ -26,8 +27,8 @@ from bresenham import get_line
 
 # --------------- INITIALIZATIONS ----------------------
 
-n_height = 200 #n de celulas
-n_width = 200 #n de celulas
+n_height = 800 #n de celulas
+n_width = 800 #n de celulas
 n_z = 40 # altura do mapa em 3D
 resolution = 0.2 #resolucao em metros
 z_resolution = 0.1 #resolucao da altura
@@ -45,8 +46,8 @@ D3lti_matrix = np.zeros((n_z,n_height,n_width))
 
 pub = rospy.Publisher("point_cloud2", PointCloud2, queue_size=2)
 
-x_origin = -20
-y_origin = -20
+x_origin = -7
+y_origin = -27
 z_origin = 0
 
 
@@ -97,10 +98,21 @@ class Mapping(object):
         
         self.drone_pose = Pose()
         self.lidar_points = []
+        self.path = PoseArray()
+        self.path.header.stamp = rospy.Time.now()
+        self.path.header.frame_id = "map"
+        self.path.header.seq = 0
 
     def callback(self,lidar_msg, pose_msg):
+        aux = Pose()
         self.lidar_points = lidar_msg.ranges
         self.drone_pose = pose_msg.pose
+        aux = pose_msg.pose
+        aux.position.x = self.drone_pose.position.x + x_origin
+        aux.position.y = self.drone_pose.position.y + y_origin
+        self.path.header = pose_msg.header
+        self.path.header.stamp = rospy.Time.now()
+        self.path.poses.append(aux)
         
         # quaternion = self.drone_pose.orientation
         # explicit_quat = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
@@ -127,7 +139,7 @@ class Mapping(object):
     def inverse_range_sensor_model(self, x, y, yaw, zt):
 
         np.set_printoptions(threshold=np.inf)
-        occupancy = np.zeros((n_width,n_height))
+        occupancy = np.zeros((n_height,n_width))
         print("x:",x," y:",y, " yaw:", yaw)
         zmax = 10.0
         alpha = 0.4
@@ -247,24 +259,27 @@ class Mapping(object):
             
         # elif len(lidar_points) != 0:
             
-            pixel_z =drone_pose.position.z + (z_origin) # in meters 
-            pixel_z = int(pixel_z/z_resolution)
-            print("z_pizel = ",pixel_z)
-            print("drone z pos = ",drone_pose.position.z)
-            # if the drone is in the map
-            if(pixel_z < n_z and 0  <= pixel_z):
+            # pixel_z =drone_pose.position.z + (z_origin) # in meters 
+            # pixel_z = int(pixel_z/z_resolution)
+            # print("z_pizel = ",pixel_z)
+            # print("drone z pos = ",drone_pose.position.z)
+            # # if the drone is in the map
+            # if(pixel_z < n_z and 0  <= pixel_z):
             
-                # Now for the 3D
-                #D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points))#self.D3inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y,drone_pose.position.z, yaw, lidar_points))
-                D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], l_current)
-                # Converter de logaritmo para probabilidade
-                D3Prob_Matrix = self.log_to_prob(D3lti_matrix)            
-                self.publish_3D_map(D3Prob_Matrix,drone_pose.position.x, drone_pose.position.y,drone_pose.position.z)
+            #     # Now for the 3D
+            #     #D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points))#self.D3inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y,drone_pose.position.z, yaw, lidar_points))
+            #     D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], l_current)
+            #     # Converter de logaritmo para probabilidade
+            #     D3Prob_Matrix = self.log_to_prob(D3lti_matrix)            
+            #     self.publish_3D_map(D3Prob_Matrix,drone_pose.position.x, drone_pose.position.y,drone_pose.position.z)
         
         
         # Publish a topic with the map
         OGM_publisher = rospy.Publisher('/map_new', OccupancyGrid, queue_size=1)
         OGM_publisher.publish(OGM)
+        Path_publisher = rospy.Publisher('drone_path', PoseArray, queue_size = 1)
+        Path_publisher.publish(self.path)
+
         
         
         
