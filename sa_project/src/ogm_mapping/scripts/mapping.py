@@ -49,13 +49,6 @@ D3lti_matrix = np.zeros((n_z,n_height,n_width))
 pub = rospy.Publisher("point_cloud2", PointCloud2, queue_size=2)
 
 
-a = np.linspace(-10,-10+n_width*resolution,num=n_width)
-xi = np.vstack([a] * n_width)
-#print("Tamanho xi:")
-#print(xi)
-yi = np.hstack([np.transpose(a[np.newaxis])] * n_height)
-#print("Tamanho yi:")
-
 x_origin = -10
 y_origin = -10
 z_origin = 0
@@ -182,41 +175,6 @@ class Mapping(object):
                     occupancy[points[j][1]][points[j][0]] = -1 #Free
 
         return occupancy
-
-
-    def original_inverse_range_sensor_model(self,x, y, yaw, zt):
-
-
-        np.set_printoptions(threshold=np.inf)
-
-        occupancy = np.zeros((n_width,n_height))
-
-        print("x:",x," y:",y, " yaw:", yaw)
-
-        zmax = 10.0
-        alpha = 0.2
-        beta = 0.009817477*2 # 2pi/640 - distance between adjacent beams
-        x_mat = np.full((n_width,n_height),x) # array of x values
-        y_mat = np.full((n_width,n_height),y) # array of y values
-
-        r = np.sqrt(np.square(xi - x_mat) + np.square(yi - y_mat)) # relative range 
-        phi = np.arctan2(yi - y_mat,xi - x_mat) - yaw # relative heading
-        # Iterating through every cell, checking their state of occupancy
-        for i in range(0,n_height):
-            for j in range(0,n_width):
-
-                # Findes the index correponding to the laser beam that intersects the cell
-                k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)
-                # Corresponding range            
-                z = zt[k] 
-        
-                if z == float('inf') or math.isnan(z) or r[i][j] > min(zmax, z + alpha/2) or abs(phi[i][j] - lidar_angles[k]) > beta/2:
-                    occupancy[i][j] = 0 # Unknown
-                elif z < zmax and abs(r[i][j] - z) < alpha/2:
-                    occupancy[i][j] = 1 # Occupied
-                elif r[i][j] <= z:
-                    occupancy[i][j] = -1 #Free
-        return occupancy
     
 
     # Lets define a mapping with Occupancy Grid Mapping
@@ -313,7 +271,7 @@ class Mapping(object):
                     g = int(255.0*(i+1)/(n_z+10))
                     b = int(0.1*255.0*(i+1)/(n_z+10))
                     a = 255
-                    print(r,g,b,(i+1),(n_z+10))
+                    #print(r,g,b,(i+1),(n_z+10))
                         
                     # print r, g, b, a
                     rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, a))[0]
