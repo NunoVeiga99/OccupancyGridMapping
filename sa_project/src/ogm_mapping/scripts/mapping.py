@@ -27,11 +27,13 @@ from bresenham import get_line
 
 # --------------- INITIALIZATIONS ----------------------
 
-n_height = 800 #n de celulas
-n_width = 800 #n de celulas
+n_height = 300 #n de celulas na direcao do y
+n_width = 200 #n de celulas na direcao do x
 n_z = 40 # altura do mapa em 3D
-resolution = 0.2 #resolucao em metros
+resolution = 0.1 #resolucao em metros
 z_resolution = 0.1 #resolucao da altura
+#min_angle = np.pi/2 # em radianos
+#max_angle = 5*np.pi/2 #em radianos
 min_angle = -np.pi # em radianos
 max_angle = np.pi #em radianos
 n_beams = 640
@@ -46,8 +48,16 @@ D3lti_matrix = np.zeros((n_z,n_height,n_width))
 
 pub = rospy.Publisher("point_cloud2", PointCloud2, queue_size=2)
 
-x_origin = -7
-y_origin = -27
+
+a = np.linspace(-10,-10+n_width*resolution,num=n_width)
+xi = np.vstack([a] * n_width)
+#print("Tamanho xi:")
+#print(xi)
+yi = np.hstack([np.transpose(a[np.newaxis])] * n_height)
+#print("Tamanho yi:")
+
+x_origin = -10
+y_origin = -10
 z_origin = 0
 
 
@@ -108,25 +118,12 @@ class Mapping(object):
         self.lidar_points = lidar_msg.ranges
         self.drone_pose = pose_msg.pose
         aux = pose_msg.pose
-        aux.position.x = self.drone_pose.position.x + x_origin
-        aux.position.y = self.drone_pose.position.y + y_origin
+        aux.position.x = self.drone_pose.position.x #+ x_origin
+        aux.position.y = self.drone_pose.position.y #+ y_origin
         self.path.header = pose_msg.header
         self.path.header.stamp = rospy.Time.now()
         self.path.poses.append(aux)
         
-        # quaternion = self.drone_pose.orientation
-        # explicit_quat = [quaternion.x, quaternion.y, quaternion.z, quaternion.w]
-        # roll, pitch, yaw = tf.transformations.euler_from_quaternion(explicit_quat)
-        # print("roll: ", roll, "pitch: ", pitch, "yaw: ", yaw)
-
-         
-
-    # def lidar_callback(self,msg):
-    #     self.lidar_points = msg.ranges
-
-    # def pose_callback(self, msg):
-    #     self.drone_pose = msg.pose
-
 
     # The Inverse Range Sensor Model will return a matrix with Logaritmic Values and we have to put that values as Proabilities
     # p(m|z,x) = 1-(1/(1+exp{log_odds}))
@@ -145,22 +142,16 @@ class Mapping(object):
         alpha = 0.4
         beta = 0.009817477*2 # 2pi/640 - distance between adjacent beams    
             
-        x -= x_origin # in meters 
-        #y -= y_origin # in meters
-        #x = x_origin-x # in meters 
-        y = -y_origin-y # in meters
-        # x = -x
-        # y = -y
-        x_pos = int(x/resolution) # in pixels
-        y_pos = int(y/resolution) # in pixels
+        x_mat = -x_origin+x # in meters 
+        y_mat = -y_origin+y # in meters
+        x_pos = int(x_mat/resolution) # in pixels
+        y_pos = int(y_mat/resolution) # in pixels
         print('Drone grid position =(',x_pos,y_pos,')')
         for i in range(n_beams):
             
             # Corresponding range            
             z = zt[i]
             # For now we will ignore the unknown positions
-            
-            
             # but is possible t
             if math.isnan(z): # if there was a reading error
                 continue
@@ -169,44 +160,62 @@ class Mapping(object):
             #and the drone is empty. So we can map it as empty
             if z == float('inf') :
                 continue
-                z = zmax - (alpha)
-                limit = False
-                
-            
+
+                            
             #(target_x,target_y) is the position that the laser is reading, if the
             # drone is at (0,0). Further translation is necessary
             target = polar_to_rect(z,(lidar_angles[i]+yaw))
             
             # points is a list (converted to tuple for more ) of all the points that compose the beam (like a pixelized line in paint)
-            # print("laser",i," target =",int((target[0]+x)/resolution),int((target[1]+y)/resolution))
-            points_ = list(get_line((0,0),(int((target[0])/resolution),int((target[1])/resolution))))
-            # points = get_line((x_pos,y_pos),(int((target[0])/resolution)+x_pos,int((-target[1])/resolution)+y_pos))
+            points = get_line((x_pos,y_pos),(int((target[0])/resolution)+x_pos,int((target[1])/resolution)+y_pos))
 
-            # if(points[0]!=(x_pos,y_pos) or ):
-            
-            # print(points)
-            points = [list(j) for j in points_]
                     
             for j in range(len(points)):
-                
-                  # check if the calculation is within map cell bounds
-                #points[j][0]-= int((x_origin-x)/resolution)-n_height
-                #points[j][1]-= int((y_origin-y)/resolution)-n_width
-                points[j][0] = x_pos + points[j][0]
-                points[j][1] = y_pos - points[j][1]
-                # print("points -> x=",points[j][0],points[j][1])
 
-                if ((points[j][0] >= n_height ) or (points[j][1] >= n_width) or (points[j][0] < 0) or (points[j][1] < 0)):
+                if ((points[j][1] >= n_height ) or (points[j][0] >= n_width) or (points[j][0] < 0) or (points[j][1] < 0)):
                     continue
-                
-                # print("x =",points[j][0],"  y =",)
                 
                 z_new = resolution*math.sqrt(((points[j][0]-x_pos)*(points[j][0]-x_pos))+((points[j][1]-y_pos)*(points[j][1]-y_pos)))
                 if limit and z < zmax and abs(z_new - z) < alpha/2:
-                    occupancy[points[j][0]][points[j][1]] = 1 # Occupied
+                    occupancy[points[j][1]][points[j][0]] = 1 # Occupied
                 elif z_new <= z:
-                    occupancy[points[j][0]][points[j][1]] = -1 #Free
+                    occupancy[points[j][1]][points[j][0]] = -1 #Free
 
+        return occupancy
+
+
+    def original_inverse_range_sensor_model(self,x, y, yaw, zt):
+
+
+        np.set_printoptions(threshold=np.inf)
+
+        occupancy = np.zeros((n_width,n_height))
+
+        print("x:",x," y:",y, " yaw:", yaw)
+
+        zmax = 10.0
+        alpha = 0.2
+        beta = 0.009817477*2 # 2pi/640 - distance between adjacent beams
+        x_mat = np.full((n_width,n_height),x) # array of x values
+        y_mat = np.full((n_width,n_height),y) # array of y values
+
+        r = np.sqrt(np.square(xi - x_mat) + np.square(yi - y_mat)) # relative range 
+        phi = np.arctan2(yi - y_mat,xi - x_mat) - yaw # relative heading
+        # Iterating through every cell, checking their state of occupancy
+        for i in range(0,n_height):
+            for j in range(0,n_width):
+
+                # Findes the index correponding to the laser beam that intersects the cell
+                k = np.argmin(np.absolute(lidar_angles - phi[i][j]), axis=-1)
+                # Corresponding range            
+                z = zt[k] 
+        
+                if z == float('inf') or math.isnan(z) or r[i][j] > min(zmax, z + alpha/2) or abs(phi[i][j] - lidar_angles[k]) > beta/2:
+                    occupancy[i][j] = 0 # Unknown
+                elif z < zmax and abs(r[i][j] - z) < alpha/2:
+                    occupancy[i][j] = 1 # Occupied
+                elif r[i][j] <= z:
+                    occupancy[i][j] = -1 #Free
         return occupancy
     
 
@@ -245,6 +254,7 @@ class Mapping(object):
             # If the vector its not empty we should update the matrix with the help of the inverse range sensor model
             # l(t,i) = l(t-1,i) + inverse range-sensor model - l0 (l0 = 0)
             # Note: the l matriz was defined in the inverse range sensor code with entries like  positionx, positiony, theta, lidar_points
+            #l_current =  self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points)
             l_current =  self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points)
             lti_matrix = np.add(lti_matrix,l_current)
             # Converter de logaritmo para probabilidade
@@ -257,21 +267,20 @@ class Mapping(object):
                 OGM.data.append(Prob_Matrix_1D[i] * 100) # Multiply by 100 to obtain a 0-100% probabilities
             
             
-        # elif len(lidar_points) != 0:
+            # now Is the 3D part
+            pixel_z =drone_pose.position.z + (z_origin) # in meters 
+            pixel_z = int(pixel_z/z_resolution)
+            print("z_pizel = ",pixel_z)
+            print("drone z pos = ",drone_pose.position.z)
+            # if the drone is in the map
+            if(pixel_z < n_z and 0  <= pixel_z):
             
-            # pixel_z =drone_pose.position.z + (z_origin) # in meters 
-            # pixel_z = int(pixel_z/z_resolution)
-            # print("z_pizel = ",pixel_z)
-            # print("drone z pos = ",drone_pose.position.z)
-            # # if the drone is in the map
-            # if(pixel_z < n_z and 0  <= pixel_z):
-            
-            #     # Now for the 3D
-            #     #D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points))#self.D3inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y,drone_pose.position.z, yaw, lidar_points))
-            #     D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], l_current)
-            #     # Converter de logaritmo para probabilidade
-            #     D3Prob_Matrix = self.log_to_prob(D3lti_matrix)            
-            #     self.publish_3D_map(D3Prob_Matrix,drone_pose.position.x, drone_pose.position.y,drone_pose.position.z)
+                # Now for the 3D
+                #D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points))#self.D3inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y,drone_pose.position.z, yaw, lidar_points))
+                D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], l_current)
+                # Converter de logaritmo para probabilidade
+                D3Prob_Matrix = self.log_to_prob(D3lti_matrix)            
+                self.publish_3D_map(D3Prob_Matrix,drone_pose.position.x, drone_pose.position.y,drone_pose.position.z)
         
         
         # Publish a topic with the map
@@ -290,19 +299,21 @@ class Mapping(object):
         for i in range(n_z):
             for j in range(n_height):
                 for k in range(n_width):
-                    x = (float(k)*resolution) + (x_origin)# - drone_x
-                    y = (float(j)*resolution) + (y_origin)# - drone_y
+                    x = (float(k)*resolution) + (x_origin)#
+                    y = (float(j)*resolution) + (y_origin)#
                     z = ((float(i)*z_resolution) + (z_origin))
                     
                     # We just want borders!
+                    # In the future, we might consider increase the probability upper 0.5
                     if(D3Prob_Matrix[i,j,k] <= 0.5):
                         continue
                     inc += 1
                     
-                    r = int(255.0*((i+1)/(n_z+10)))
-                    g = int(255.0*((i+1)/(n_z+10)))
-                    b = int(255.0*((i+1)/(n_z+10)))
+                    r = int(0.1*255.0*(i+1)/(n_z+10))
+                    g = int(255.0*(i+1)/(n_z+10))
+                    b = int(0.1*255.0*(i+1)/(n_z+10))
                     a = 255
+                    print(r,g,b,(i+1),(n_z+10))
                         
                     # print r, g, b, a
                     rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, a))[0]
@@ -355,122 +366,5 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-
-
-
-
-#%%
-
-# PointCloud2 color cube
-# https://answers.ros.org/question/289576/understanding-the-bytes-in-a-pcl2-message/
-
-# import rospy
-# import struct
-
-# from sensor_msgs import point_cloud2
-# from sensor_msgs.msg import PointCloud2, PointField
-# from std_msgs.msg import Header
-
-
-# rospy.init_node("create_cloud_xyzrgb")
-# pub = rospy.Publisher("point_cloud2", PointCloud2, queue_size=2)
-
-# points = []
-# lim = 8
-# for i in range(lim):
-#     for j in range(lim):
-#         for k in range(lim):
-#             x = float(i) / lim
-#             y = float(j) / lim
-#             z = float(k) / lim
-#             r = int(x * 255.0)
-#             g = int(y * 255.0)
-#             b = int(z * 255.0)
-#             a = 255
-#             # print r, g, b, a
-#             rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, a))[0]
-#             # print hex(rgb)
-#             pt = [x, y, z, rgb]
-#             points.append(pt)
-
-# fields = [PointField('x', 0, PointField.FLOAT32, 1),
-#           PointField('y', 4, PointField.FLOAT32, 1),
-#           PointField('z', 8, PointField.FLOAT32, 1),
-#           # PointField('rgb', 12, PointField.UINT32, 1),
-#           PointField('rgba', 12, PointField.UINT32, 1),
-#           ]
-
-# # print points
-
-# header = Header()
-# header.frame_id = "map"
-# pc2 = point_cloud2.create_cloud(header, fields, points)
-
-# while not rospy.is_shutdown():
-#     pc2.header.stamp = rospy.Time.now()
-#     pub.publish(pc2)
-#     rospy.sleep(1.0)
-
-
-
-
-
-    
-    # def D3inverse_range_sensor_model(self, x, y, z_h, yaw, zt):
-
-    #     np.set_printoptions(threshold=np.inf)
-    #     occupancy = np.zeros((n_width,n_height))
-    #     print("x:",x," y:",y," z:",z_h, " yaw:", yaw)
-    #     zmax = 10.0
-    #     alpha = 0.2
-            
-    #     x -= x_origin-5 # in meters 
-    #     y -= y_origin-5 # in meters
-    #     x_pos = int(x/resolution) # in pixels
-    #     y_pos = int(y/resolution) # in pixels
-    #     for i in range(n_beams):
-            
-    #         # Corresponding range            
-    #         z = zt[i]
-    #         # For now we will ignore the unknown positions
-            
-            
-    #         # but is possible t
-    #         if math.isnan(z): # if there was a reading error
-    #             continue
-            
-    #         limit = True # if we receive a inf, we know that the space between the zmax
-    #         #and the drone is empty. So we can map it as empty
-    #         if z == float('inf') :
-    #             continue
-    #             # z = zmax - (alpha)
-    #             # limit = False
-                
-    #         #(target_x,target_y) is the position that the laser is reading, if the
-    #         # drone is at (0,0). Further translation is necessary
-    #         target = polar_to_rect(z,lidar_angles[i]+yaw)
-            
-    #         # points is a list (converted to tuple for more ) of all the points that compose the beam (like a pixelized line in paint)
-    #         points = get_line((x_pos,y_pos),(int((target[0]+x)/resolution),int((target[1]+y)/resolution)))
-            
-    #         # print(points)
-                    
-    #         for j in range(len(points)):
-                
-    #               # check if the calculation is within map cell bounds                
-
-    #             if ((points[j][0] >= n_height ) or (points[j][1] >= n_width) or (points[j][0] < 0) or (points[j][1] < 0)):
-    #                 continue
-                
-    #             # print("x =",points[j][0],"  y =",)
-                
-    #             z_new = resolution*math.sqrt(((points[j][0]-x_pos)*(points[j][0]-x_pos))+((points[j][1]-y_pos)*(points[j][1]-y_pos)))
-    #             if limit and z < zmax and abs(z_new - z) < alpha/2:
-    #                 occupancy[points[j][0]][points[j][1]] = 1 # Occupied
-    #             elif z_new <= z:
-    #                 occupancy[points[j][0]][points[j][1]] = -1 #Free
-
-    #     return occupancy
 
 
