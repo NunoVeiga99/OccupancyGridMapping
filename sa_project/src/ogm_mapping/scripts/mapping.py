@@ -27,10 +27,10 @@ from bresenham import get_line
 
 # --------------- INITIALIZATIONS ----------------------
 
-n_height = 300 #n de celulas na direcao do y
-n_width = 200 #n de celulas na direcao do x
+n_height = 500 #n de celulas na direcao do y
+n_width = 1000 #n de celulas na direcao do x
 n_z = 40 # altura do mapa em 3D
-resolution = 0.1 #resolucao em metros
+resolution = 0.05 #resolucao em metros
 z_resolution = 0.1 #resolucao da altura
 #min_angle = np.pi/2 # em radianos
 #max_angle = 5*np.pi/2 #em radianos
@@ -49,9 +49,13 @@ D3lti_matrix = np.zeros((n_z,n_height,n_width))
 pub = rospy.Publisher("point_cloud2", PointCloud2, queue_size=2)
 
 
-x_origin = -10
-y_origin = -10
+x_origin = -35
+y_origin = -13
 z_origin = 0
+
+# Flag to say if we want or not 3D mapping
+USE_3D_MAPPING = 0
+print("3D Mapping =",USE_3D_MAPPING)
 
 
 
@@ -132,7 +136,7 @@ class Mapping(object):
         occupancy = np.zeros((n_height,n_width))
         print("x:",x," y:",y, " yaw:", yaw)
         zmax = 10.0
-        alpha = 0.4
+        alpha = 0.2
         beta = 0.009817477*2 # 2pi/640 - distance between adjacent beams    
             
         x_mat = -x_origin+x # in meters 
@@ -226,19 +230,19 @@ class Mapping(object):
             
             
             # now Is the 3D part
-            pixel_z =drone_pose.position.z + (z_origin) # in meters 
-            pixel_z = int(pixel_z/z_resolution)
-            print("z_pizel = ",pixel_z)
-            print("drone z pos = ",drone_pose.position.z)
-            # if the drone is in the map
-            if(pixel_z < n_z and 0  <= pixel_z):
-            
-                # Now for the 3D
-                #D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], self.inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y, yaw, lidar_points))#self.D3inverse_range_sensor_model(drone_pose.position.x, drone_pose.position.y,drone_pose.position.z, yaw, lidar_points))
-                D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], l_current)
-                # Converter de logaritmo para probabilidade
-                D3Prob_Matrix = self.log_to_prob(D3lti_matrix)            
-                self.publish_3D_map(D3Prob_Matrix,drone_pose.position.x, drone_pose.position.y,drone_pose.position.z)
+            if(USE_3D_MAPPING):
+                pixel_z =drone_pose.position.z + (z_origin) # in meters 
+                pixel_z = int(pixel_z/z_resolution)
+                print("z_pizel = ",pixel_z)
+                print("drone z pos = ",drone_pose.position.z)
+                # if the drone is in the map
+                if(pixel_z < n_z and 0  <= pixel_z):
+                
+                    # Now for the 3D
+                    D3lti_matrix[pixel_z] = np.add(D3lti_matrix[pixel_z], l_current)
+                    # Converter de logaritmo para probabilidade
+                    D3Prob_Matrix = self.log_to_prob(D3lti_matrix)            
+                    self.publish_3D_map(D3Prob_Matrix,drone_pose.position.x, drone_pose.position.y,drone_pose.position.z)
         
         
         # Publish a topic with the map
