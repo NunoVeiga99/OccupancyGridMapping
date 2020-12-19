@@ -46,7 +46,7 @@ lidar_angles = np.linspace(min_angle, max_angle, 640)
 lti_matrix = np.zeros((n_height, n_width)) 
 D3lti_matrix = np.zeros((n_z,n_height,n_width))
 
-pub = rospy.Publisher("point_cloud2", PointCloud2, queue_size=2)
+pub = rospy.Publisher("3d_map", PointCloud2, queue_size=2)
 
 
 x_origin = -35
@@ -246,7 +246,7 @@ class Mapping(object):
         
         
         # Publish a topic with the map
-        OGM_publisher = rospy.Publisher('/map_new', OccupancyGrid, queue_size=1)
+        OGM_publisher = rospy.Publisher('/2d_map', OccupancyGrid, queue_size=1)
         OGM_publisher.publish(OGM)
         Path_publisher = rospy.Publisher('drone_path', PoseArray, queue_size = 1)
         Path_publisher.publish(self.path)

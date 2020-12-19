@@ -2,7 +2,7 @@
 
 <!--    <node pkg="rviz" type="rviz" name="rviz"></node>-->
 
-    <node pkg="ogm_mapping" type="mapping.py" name="scan_lidar" output="screen">
+    <node pkg="ogm_mapping" type="mapping.py" name="ogm_mapping" output="screen">
         
     </node>
 </launch>
