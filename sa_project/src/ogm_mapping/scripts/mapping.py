@@ -61,40 +61,10 @@ print("3D Mapping =",USE_3D_MAPPING)
 
 # --------------------- FUNCTIONS ----------------------
 
-#3D Transf 
-# roll  -> x axis   ->alpha
-# pitch -> y axis   ->beta
-# yaw   -> z axis   ->gamma
-
-# Receives (x,y,z) and returns (x',y',z')=[R](x,y,z)
-# given pitch, yaw and roll
-# in radians, because of numpy
-# point is a 
-
-def Euler_rotation(roll,pitch,yaw,point):
-    R_alpha = np.matrix([[1, 0,              0],
-                        [0, np.cos(roll),   -np.sin(roll)],
-                        [0, np.sin(roll),   np.cos(roll)]])
-    R_beta  = np.matrix([[np.cos(pitch),0,np.sin(pitch)],
-                        [0,1,0],
-                        [-np.sin(pitch),0,np.cos(pitch)]])
-
-    R_gamma = np.matrix([[np.cos(yaw),-np.sin(yaw),0],
-                        [np.sin(yaw), np.cos(yaw),0],
-                        [0,0,1]])
-
-    # This order of matrix mult. was tested in geogebra
-    R = np.matmul(R_alpha,R_beta,R_gamma)
-
-    return R.dot(point)
 
 # Returns (x,y) of 2D polar data
 def polar_to_rect(range,teta):
     return ([range*np.cos(teta),range*np.sin(teta)])
-
-# To obtain the norm of 2D or 3D vector's, use this:
-#numpy.linalg.norm
-
 
 
 class Mapping(object):
@@ -253,6 +223,9 @@ class Mapping(object):
 
         
         
+    # The development of this function is based in this question dicussed in 
+    # this forum:
+    # https://answers.ros.org/question/289576/understanding-the-bytes-in-a-pcl2-message/
         
     def publish_3D_map(self,D3Prob_Matrix,drone_x,drone_y,drone_z):
         points = []
