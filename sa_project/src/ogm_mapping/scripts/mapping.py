@@ -27,28 +27,27 @@ from bresenham import get_line
 
 # --------------- INITIALIZATIONS ----------------------
 
-n_height = 500 #n de celulas na direcao do y
-n_width = 1000 #n de celulas na direcao do x
-n_z = 40 # altura do mapa em 3D
-resolution = 0.05 #resolucao em metros
-z_resolution = 0.1 #resolucao da altura
-#min_angle = np.pi/2 # em radianos
-#max_angle = 5*np.pi/2 #em radianos
-min_angle = -np.pi # em radianos
-max_angle = np.pi #em radianos
-n_beams = 640
+n_height = 500 # y axis
+n_width = 1000 # x axis
+n_z = 40 # height of the 3D map in the z axis
+resolution = 0.05 #Resolution in meters
+z_resolution = 0.1 #Resolution of the 3D map in the z axis
+min_angle = -np.pi # Min angle in radians
+max_angle = np.pi # Max angle in radians
+n_beams = 640 # Total number of beams
 
-#Mapa com as probabilidades
-ogm_map = np.zeros((n_height,n_width))
-D3_ogm_map = np.zeros((n_z,n_height,n_width))
-lidar_angles = np.linspace(min_angle, max_angle, 640)
+#Definition of the maps
+ogm_map = np.zeros((n_height,n_width)) # 2D map
+D3_ogm_map = np.zeros((n_z,n_height,n_width)) # 3D map
+lidar_angles = np.linspace(min_angle, max_angle, 640) #vector of all the lidar angles
 
 lti_matrix = np.zeros((n_height, n_width)) 
 D3lti_matrix = np.zeros((n_z,n_height,n_width))
 
+# 3D map publisher
 pub = rospy.Publisher("3d_map", PointCloud2, queue_size=2)
 
-
+#Map origin
 x_origin = -35
 y_origin = -13
 z_origin = 0
@@ -66,13 +65,13 @@ print("3D Mapping =",USE_3D_MAPPING)
 def polar_to_rect(range,teta):
     return ([range*np.cos(teta),range*np.sin(teta)])
 
-
+# Mapping class
+# This class defines the main algorithms responsible for 3D and 3D mapping
 class Mapping(object):
 
     def __init__(self):
 
         rospy.init_node('mapping')
-        
         self.drone_pose = Pose()
         self.lidar_points = []
         self.path = PoseArray()
@@ -80,6 +79,7 @@ class Mapping(object):
         self.path.header.frame_id = "map"
         self.path.header.seq = 0
 
+    # Joint Callback - receives lidar and pose info if they are synced
     def callback(self,lidar_msg, pose_msg):
         aux = Pose()
         self.lidar_points = lidar_msg.ranges
@@ -283,11 +283,14 @@ def main():
     # declare the node name
     rospy.init_node('mapping')  
 
+    #Mapping object
     mapping = Mapping()
     
+    #Subscribers
     lidarSub = message_filters.Subscriber('/iris_0/scan', LaserScan)
     poseSub = message_filters.Subscriber('/mavros/local_position/pose',PoseStamped)
 
+    #ApproximateTimeSyncronizer is used to sync lidar and pose info
     ts = message_filters.ApproximateTimeSynchronizer([lidarSub, poseSub], queue_size = 1, slop = 0.05)
     ts.registerCallback(mapping.callback)
     
